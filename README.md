@@ -100,4 +100,4 @@ This subscription model makes Annapurna a real, monetizable SaaS product.
 ---
 
 **Annapurna**  
-From your pantry to your plate — powered by AI.
+From your pantry to your plate - powered by AI.
