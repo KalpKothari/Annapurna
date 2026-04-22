@@ -4,6 +4,20 @@ const STRAPI_URL =
   process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
+// Retry fetch helper for Strapi cold start
+const fetchWithRetry = async (url, options, retries = 3, delayMs = 2000) => {
+  for (let i = 0; i < retries; i++) {
+    const res = await fetch(url, options);
+    if (res.ok) return res;
+
+    const isLastAttempt = i === retries - 1;
+    if (isLastAttempt) return res; // return the failed response on last try
+
+    console.warn(`Strapi request failed (attempt ${i + 1}/${retries}), retrying in ${delayMs}ms...`);
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+};
+
 export const checkUser = async () => {
   const user = await currentUser();
   if (!user) return null;
@@ -13,14 +27,13 @@ export const checkUser = async () => {
     return null;
   }
 
-   // Check if user has Pro plan
   const { has } = await auth();
   const subscriptionTier = has({ plan: "pro" }) ? "pro" : "free";
   const email = user.emailAddresses[0].emailAddress;
 
   try {
-    // 🔹 Fetch all users
-    const usersRes = await fetch(`${STRAPI_URL}/api/users`, {
+    // Fetch all users with retry
+    const usersRes = await fetchWithRetry(`${STRAPI_URL}/api/users`, {
       headers: {
         Authorization: `Bearer ${STRAPI_API_TOKEN}`,
       },
@@ -28,18 +41,19 @@ export const checkUser = async () => {
     });
 
     if (!usersRes.ok) {
-      console.error(await usersRes.text());
+      const errText = await usersRes.text();
+      console.error("❌ Strapi /api/users failed:", errText);
       return null;
     }
 
     const users = await usersRes.json();
 
-    // 🔹 Match by clerkId OR email
+    // Match by clerkId OR email
     let existingUser = users.find(
-      u => u.clerkId === user.id || u.email === email
+      (u) => u.clerkId === user.id || u.email === email
     );
 
-    // ✅ USER EXISTS → UPDATE clerkId if missing
+    // USER EXISTS → UPDATE clerkId if missing
     if (existingUser) {
       const updates = {};
 
@@ -52,7 +66,7 @@ export const checkUser = async () => {
       }
 
       if (Object.keys(updates).length > 0) {
-        await fetch(`${STRAPI_URL}/api/users/${existingUser.id}`, {
+        await fetchWithRetry(`${STRAPI_URL}/api/users/${existingUser.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -65,8 +79,8 @@ export const checkUser = async () => {
       return { ...existingUser, ...updates };
     }
 
-    // 🔹 Get authenticated role
-    const rolesRes = await fetch(
+    // Get authenticated role with retry
+    const rolesRes = await fetchWithRetry(
       `${STRAPI_URL}/api/users-permissions/roles`,
       {
         headers: {
@@ -77,7 +91,7 @@ export const checkUser = async () => {
 
     const rolesData = await rolesRes.json();
     const authenticatedRole = rolesData.roles.find(
-      r => r.type === "authenticated"
+      (r) => r.type === "authenticated"
     );
 
     if (!authenticatedRole) {
@@ -85,8 +99,8 @@ export const checkUser = async () => {
       return null;
     }
 
-    // 🆕 CREATE USER (ONLY WHEN SAFE)
-    const createRes = await fetch(`${STRAPI_URL}/api/users`, {
+    // CREATE USER with retry
+    const createRes = await fetchWithRetry(`${STRAPI_URL}/api/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -108,7 +122,7 @@ export const checkUser = async () => {
     });
 
     if (!createRes.ok) {
-      console.error(await createRes.text());
+      console.error("❌ Failed to create user:", await createRes.text());
       return null;
     }
 
