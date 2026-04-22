@@ -52,7 +52,7 @@ export default function AddToPantryModal({ isOpen, onClose, onSuccess }) {
   // Handle image selection
   const handleImageSelect = (file) => {
     setSelectedImage(file);
-    setScannedIngredients([]); // Reset when new image selected
+    setScannedIngredients([]);
   };
 
   // Scan image
@@ -132,12 +132,12 @@ export default function AddToPantryModal({ isOpen, onClose, onSuccess }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto rounded-none">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold tracking-tight">
+          <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight">
             Add to Pantry
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm">
             Scan your pantry with AI or add items manually
           </DialogDescription>
         </DialogHeader>
@@ -155,7 +155,7 @@ export default function AddToPantryModal({ isOpen, onClose, onSuccess }) {
           </TabsList>
 
           {/* AI Scan Tab */}
-          <TabsContent value="scan" className="space-y-6 mt-6">
+          <TabsContent value="scan" className="space-y-4 mt-6">
             {scannedIngredients.length === 0 ? (
               // Step 1: Upload & Scan
               <div className="space-y-4">
@@ -211,24 +211,24 @@ export default function AddToPantryModal({ isOpen, onClose, onSuccess }) {
                 </div>
 
                 {/* Ingredients List */}
-                <div className="space-y-3 max-h-96 overflow-y-auto">
+                <div className="space-y-3 max-h-[40vh] overflow-y-auto">
                   {scannedIngredients.map((ingredient, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-3 p-4 bg-stone-50 rounded-xl border border-stone-200"
+                      className="flex items-center gap-3 p-3 sm:p-4 bg-stone-50 rounded-xl border border-stone-200"
                     >
-                      <div className="flex-1">
-                        <div className="font-medium text-stone-900">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-stone-900 text-sm sm:text-base truncate">
                           {ingredient.name}
                         </div>
-                        <div className="text-sm text-stone-500">
+                        <div className="text-xs sm:text-sm text-stone-500">
                           {ingredient.quantity}
                         </div>
                       </div>
                       {ingredient.confidence && (
                         <Badge
                           variant="outline"
-                          className="text-xs text-green-700 border-green-200"
+                          className="text-xs text-green-700 border-green-200 shrink-0"
                         >
                           {Math.round(ingredient.confidence * 100)}%
                         </Badge>
@@ -237,7 +237,7 @@ export default function AddToPantryModal({ isOpen, onClose, onSuccess }) {
                         size="sm"
                         variant="ghost"
                         onClick={() => removeIngredient(index)}
-                        className="text-stone-600 hover:text-red-600"
+                        className="text-stone-600 hover:text-red-600 shrink-0"
                       >
                         <X className="w-4 h-4" />
                       </Button>
