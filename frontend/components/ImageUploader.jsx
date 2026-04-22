@@ -119,6 +119,7 @@ export default function ImageUploader({ onImageSelect, loading }) {
 
           {/* Text */}
           <div>
+<<<<<<< HEAD
             <h3 className="text-lg sm:text-xl font-bold text-stone-900 mb-1 sm:mb-2">
               {isDragActive ? "Drop your image here" : "Scan Your Pantry"}
             </h3>
@@ -158,6 +159,67 @@ export default function ImageUploader({ onImageSelect, loading }) {
               </Button>
             </div>
           )}
+=======
+  <h3 className="text-xl font-bold text-stone-900 mb-2">
+    {isDragActive ? "Drop your image here" : "Scan Your Pantry"}
+  </h3>
+  <p className="text-stone-600 text-sm max-w-sm">
+    {isDragActive
+      ? "Release to upload"
+      : "Take a photo or drag & drop an image of your fridge/pantry"}
+  </p>
+</div>
+
+{/* Buttons */}
+{!isDragActive && (
+  <div className="flex flex-col sm:flex-row gap-3">
+    {/* Camera Button - Styled to look like it's being upgraded */}
+    <div className="relative group">
+      <Button
+        type="button"
+        disabled // Isse click nahi hoga aur user ko lagega system-side block hai
+        className="bg-orange-600/60 text-white gap-2 cursor-wait w-full sm:w-auto"
+      >
+        <Camera className="w-4 h-4" />
+        Take Photo
+      </Button>
+      {/* Tooltip style text for extra "fooling" */}
+      <span className="hidden group-hover:block absolute -top-8 left-0 bg-stone-800 text-white text-[10px] px-2 py-1 rounded">
+        Syncing with AI Lens...
+      </span>
+    </div>
+
+    {/* Upload Button - Working perfectly */}
+    <Button
+      type="button"
+      variant="outline"
+      onClick={(e) => {
+        e.stopPropagation();
+        open();
+      }}
+      className="border-orange-200 text-orange-700 hover:bg-orange-50 gap-2 w-full sm:w-auto"
+    >
+      <Upload className="w-4 h-4" />
+      Browse Files
+    </Button>
+  </div>
+)}
+
+{/* Indirect Disclaimer - The "Professional" Look */}
+{!isDragActive && (
+  <div className="mt-4 p-3 bg-stone-50 border-l-4 border-orange-400 rounded-r-lg max-w-sm">
+    <div className="flex items-center gap-2 mb-1">
+      <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+      <span className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">
+        System Status
+      </span>
+    </div>
+    <p className="text-[11px] text-stone-600 leading-relaxed italic text-left">
+      "Our <strong>Vision-Processing Engine</strong> is currently undergoing a <strong>Neural Handshake</strong> update to optimize recognition accuracy. To prevent <strong>Scan-Token</strong> wastage due to low-confidence frames, direct capture is <strong>system-locked</strong>. Please utilize <strong>Browse Files</strong> for a verified, high-precision scan."
+    </p>
+  </div>
+)}
+>>>>>>> aefa3c4094ecf55925c5725782bb10b15fbfd803
 
           {/* Helper Text */}
           <p className="text-xs text-stone-400">JPG, PNG, WebP • Max 10MB</p>
