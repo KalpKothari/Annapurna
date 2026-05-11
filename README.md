@@ -56,7 +56,7 @@ This subscription model makes Annapurna a real, monetizable SaaS product.
 ---
 
 ## Content Management
-- Uses **Strapi Headless CMS** to manage:
+- Uses **Supabase (Database + Backend)** to manage:
   - Recipes
   - Categories
   - Cuisines
@@ -67,7 +67,7 @@ This subscription model makes Annapurna a real, monetizable SaaS product.
 
 ## Security & Production Readiness
 - **Arcjet** for bot protection and API rate limiting.
-- Secure authentication using **Google OAuth**.
+- Secure authentication using **Google OAuth (via Clerk integration)**.
 - Fully responsive UI across devices.
 - Built with scalability and real-world deployment in mind.
 
@@ -80,10 +80,9 @@ This subscription model makes Annapurna a real, monetizable SaaS product.
 | Frontend | React 19, Next.js 16 |
 | UI | Tailwind CSS, Shadcn UI |
 | Backend | Next.js API Routes |
-| CMS | Strapi (Headless CMS) |
-| Database | PostgreSQL (Neon) |
-| ORM | Prisma |
-| Authentication | Google OAuth |
+| Database | Supabase (PostgreSQL) |
+| ORM / DB Access | Supabase Client |
+| Authentication | Clerk (Google OAuth) |
 | AI | Image & Text Generative AI |
 | Security | Arcjet |
 | Hosting | Vercel |
