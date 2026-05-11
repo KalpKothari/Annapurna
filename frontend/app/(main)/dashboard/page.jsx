@@ -18,8 +18,17 @@ export default async function DashboardPage() {
   const areasData = await getAreas();
 
   const recipeOfTheDay = recipeData?.recipe;
-  const categories = categoriesData?.categories || [];
-  const areas = areasData?.areas || [];
+  
+  // Deduplicate categories and areas to avoid duplicate key warnings
+  const uniqueCategories = categoriesData?.categories
+    ? Array.from(new Map((categoriesData.categories || []).map(cat => [cat.strCategory, cat])).values())
+    : [];
+  const categories = uniqueCategories;
+  
+  const uniqueAreas = areasData?.areas
+    ? Array.from(new Map((areasData.areas || []).map(area => [area.strArea, area])).values())
+    : [];
+  const areas = uniqueAreas;
 
   return (
     <div className="min-h-screen bg-stone-50 py-16 px-4">

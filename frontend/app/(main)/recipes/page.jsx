@@ -12,6 +12,7 @@ export default function SavedRecipesPage() {
   const {
     loading,
     data: recipesData,
+    error,
     fn: fetchSavedRecipes,
   } = useFetch(getSavedRecipes);
 
@@ -45,8 +46,22 @@ export default function SavedRecipesPage() {
           </div>
         )}
 
+        {/* Error State */}
+        {error && (
+          <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6 mb-8">
+            <p className="text-red-700 font-semibold">⚠️ Error loading recipes</p>
+            <p className="text-red-600 text-sm mt-2">{error.message}</p>
+            <Button 
+              onClick={() => fetchSavedRecipes()}
+              className="mt-4 bg-red-600 hover:bg-red-700 text-white"
+            >
+              Try Again
+            </Button>
+          </div>
+        )}
+
         {/* Recipes Grid */}
-        {!loading && recipes.length > 0 && (
+        {!loading && !error && recipes.length > 0 && (
           <div className="grid md:grid-cols-2 gap-6">
             {recipes.map((recipe) => (
               <RecipeCard
@@ -59,7 +74,7 @@ export default function SavedRecipesPage() {
         )}
 
         {/* Empty State */}
-        {!loading && recipes.length === 0 && (
+        {!loading && !error && recipes.length === 0 && (
           <div className="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-stone-200">
             <div className="bg-orange-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Bookmark className="w-10 h-10 text-orange-600" />

@@ -43,7 +43,7 @@ export default function RecipeCard({ recipe, variant = "default" }) {
       };
     }
 
-    // For Strapi recipes (saved recipes, search results)
+    // For app-managed recipes (saved recipes, search results)
     if (recipe) {
       return {
         title: recipe.title,

@@ -9,18 +9,24 @@ const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
 ]);
 
+const isAuthStabilityApiRoute = createRouteMatcher([
+  "/api/users(.*)",
+  "/api/users-permissions(.*)",
+  "/api/saved-recipes(.*)",
+]);
+
 // Arcjet global protection
 const aj = arcjet({
   key: process.env.ARCJET_KEY,
   rules: [
     // Shield WAF - protects against SQL injection, XSS, etc.
     shield({
-      mode: "LIVE", // Change to "DRY_RUN" to test without blocking
+      mode: "DRY_RUN", // Change to "LIVE" for production protection
     }),
 
     // Bot detection - allow search engines, block malicious bots
     detectBot({
-      mode: "LIVE",
+      mode: "DRY_RUN", // Change to "LIVE" for production protection
       allow: [
         "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc.
         "CATEGORY:PREVIEW", // Link previews (Slack, Discord, etc.)
@@ -30,6 +36,11 @@ const aj = arcjet({
 });
 
 export default clerkMiddleware(async (auth, req) => {
+  // Keep auth bootstrap and saved-recipe APIs stable by skipping WAF bot blocks.
+  if (isAuthStabilityApiRoute(req)) {
+    return NextResponse.next();
+  }
+
   // Apply Arcjet protection FIRST (before Clerk auth check)
   const decision = await aj.protect(req);
 

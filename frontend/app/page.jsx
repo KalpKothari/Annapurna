@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { auth } from "@clerk/nextjs/server";
 import { SITE_STATS, FEATURES, HOW_IT_WORKS_STEPS } from "@/lib/data";
 import PricingSection from "@/components/PricingSection";
+import SupportSection from "@/components/SupportSection";
 import Link from "next/link";
 
 export default async function LandingPage() {
@@ -211,6 +212,9 @@ export default async function LandingPage() {
         <PricingSection subscriptionTier={subscriptionTier} />
         </div>
       </section>
+
+      {/* Support Section */}
+      <SupportSection />
     </div>
   );
 }
